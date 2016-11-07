@@ -1,5 +1,4 @@
 
-package zeitz_borkv3;
 
 import java.util.Scanner;
 import java.util.Hashtable;
