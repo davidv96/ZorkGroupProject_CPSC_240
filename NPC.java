@@ -1,26 +1,32 @@
 import java.util.Scanner;
 
+
 /**
  * This class will extend the item class, allowing us to easily add the NPC's into the room contents.
- * However we will use the item weights as their health during combat.
- *
- * @param hostile determines if a NPC is a threat to the player. If not, then players cannot attack that NPC.
- * @param 
- *
  */
-
-
-
 public class NPC extends Item {
-
     private boolean hostile;
 
+    /**
+     *
+     * @param s
+     * @throws NoItemException
+     * @throws Dungeon.IllegalDungeonFormatException
+     */
     NPC(Scanner s) throws NoItemException, Dungeon.IllegalDungeonFormatException {
         super(s);
     }
 
-    public void setHostile(boolean h){this.hostile = h;}
+    /**
+     * @param hostile will set the NPC's threat level
+     */
+    public void setHostile(boolean hostile){this.hostile = hostile;}
 
+
+    /**
+     *
+     * @return hostile returns true if the NPC is hostile can be attacked
+     */
     public boolean checkHostile(){
         return hostile;
     }
