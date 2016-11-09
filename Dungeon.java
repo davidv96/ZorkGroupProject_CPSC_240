@@ -182,4 +182,42 @@ public class Dungeon {
         }
         return items.get(primaryItemName);
     }
+
+
+    /**
+     * @author David
+     *
+     * This method will remove items from the dungeon permanently. It will first make sure the item is in the vicinity
+     * or inventory, so it doesn't affect items in another room, and make sure to remove them from either the inventory
+     * or the room/dungeon so that there are no itemExceptions late on by mistake due to broken references.
+     *
+     * @param primaryItemName the name of the item that will be removed from the dungeon
+     * @throws Item.NoItemException exception thrown if the item is not in the dungeon
+     */
+    public void disappearItem(String primaryItemName) throws Item.NoItemException {
+
+        if (GameState.instance().getItemInVicinityNamed(primaryItemName) != null) {
+            if (GameState.instance().getItemFromInventoryNamed(primaryItemName) != null) {
+                GameState.instance().removeFromInventory(GameState.instance().getItemInVicinityNamed(primaryItemName));
+            }else GameState.instance().getAdventurersCurrentRoom().getContents().remove(primaryItemName);
+            items.remove(primaryItemName);
+        }
+    }
+
+    /**
+     * @author David
+     *
+     * This method will first call the disapperItem method, because once an item is transformed, the transformation
+     * cannot be reversed. Once that is done, it will return a new time to take the place of the previous item.
+     *
+     * @param primaryItemName the name of the item being transformed
+     * @throws Item.NoItemException exception thrown if the item is not in the dungeon
+     * @return newItem this is the new, transformed version of the item we were given
+     *
+     */
+    public Item transformItem(String primaryItemName) throws Item.NoItemException{
+        Item newItem = null;
+
+        return newItem;
+    }
 }
