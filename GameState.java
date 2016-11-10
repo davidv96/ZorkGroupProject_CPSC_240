@@ -28,6 +28,8 @@ public class GameState {
     private Dungeon dungeon;
     private ArrayList<Item> inventory;
     private Room adventurersCurrentRoom;
+    private int AdventurersCurrentHealth = 100;
+    private int currentScore = 0;
 
     static synchronized GameState instance() {
         if (theInstance == null) {
@@ -161,6 +163,22 @@ public class GameState {
 
     Dungeon getDungeon() {
         return dungeon;
+    }
+
+
+    /**
+     * The damage value will be subtracted from the Adventurer's health. If the value is negative,
+     * then it will increase his health.
+     *
+     *
+     * @param dmg the int value which will affect the adventurer's overall health
+     */
+    void woundAdventurer(int dmg){
+        AdventurersCurrentHealth -= dmg;
+    }
+
+    int getAdventurersCurrentHealth(){
+        return AdventurersCurrentHealth;
     }
 
 }
