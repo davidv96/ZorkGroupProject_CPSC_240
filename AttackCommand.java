@@ -1,33 +1,42 @@
 /**
- * @author seanbermingham
- * @version 0.0.1
+ * Created by David.
  *
- * Extends the command class enabling the player to combat hostile creatures
+ * This class will take the name of the NPC which is being attacked, change its weight (which we are cleverly using
+ * as its health), and also causes damage to the adventurer by the NPC's (if they are capable of doing damage)
  *
  */
+public class AttackCommand extends Command {
+    private String itemName;
 
-
-
-class AttackCommand extends Command {
-
-    private String weapon;
-    private String target;
-
-    /**
-     * Constructor for the AttackCommand class the assigns values to the weapon and target variables.
-     * @param weapon the user may specify a weapon in their inventory to attack the target with
-     * @param target the user must specify a target they wish to attack
-     */
-    AttackCommand(String weapon, String target){
-
+    public AttackCommand(String itemName) {
+        this.itemName = itemName;
     }
 
 
     /**
      *
-     * @return will return the String result of the attack command
+     * This execute should call the changeWeight method of the NPC class in order to do damage to the NPC,
+     * as well as do damage to the adventurer by calling the wound method in the GameState.
+     *
+     * @return
      */
-    public String execute(){
 
+    @Override
+    String execute() {
+        if (itemName == null || itemName.trim().length() == 0) {
+            return "Attack what?\n";
+        }
+        try {
+            Room currentRoom =
+                    GameState.instance().getAdventurersCurrentRoom();
+            Item theItem = currentRoom.getItemNamed(itemName);
+
+
+        } catch (Item.NoItemException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
+
 }

@@ -41,7 +41,7 @@ public class Interpreter {
 
             command = promptUser(commandLine);
 
-            while (!command.equals("q")) {
+            while (!command.equals("q") && !state.getWinCondition() && !state.getLoseCondition()) {
 
                 System.out.print(
                     CommandFactory.instance().parse(command).execute());

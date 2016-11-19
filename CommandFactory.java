@@ -26,6 +26,9 @@ public class CommandFactory {
         if (verb.equals("save")) {
             return new SaveCommand(noun);
         }
+        if(verb.equals("attack")){
+            return new AttackCommand(noun);
+        }
         if (verb.equals("take")) {
             return new TakeCommand(noun);
         }

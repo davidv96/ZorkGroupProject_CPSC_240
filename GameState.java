@@ -10,6 +10,9 @@ import java.io.PrintWriter;
 
 public class GameState {
 
+
+
+
     public static class IllegalSaveFormatException extends Exception {
         public IllegalSaveFormatException(String e) {
             super(e);
@@ -30,6 +33,8 @@ public class GameState {
     private Room adventurersCurrentRoom;
     private int AdventurersCurrentHealth = 100;
     private int currentScore = 0;
+    private boolean winCondition = false;
+
 
     static synchronized GameState instance() {
         if (theInstance == null) {
@@ -166,6 +171,20 @@ public class GameState {
     }
 
 
+    public void setWinCondition(boolean change) {
+        this.winCondition = change;
+    }
+
+    public boolean getWinCondition() {
+        return winCondition;
+    }
+
+    private boolean loseCondition = false;
+    public boolean getLoseCondition() {
+        return loseCondition;
+    }
+
+
     /**
      * The damage value will be subtracted from the Adventurer's health. If the value is negative,
      * then it will increase his health.
@@ -179,6 +198,10 @@ public class GameState {
 
     int getAdventurersCurrentHealth(){
         return AdventurersCurrentHealth;
+    }
+
+    public void addScore(int points) {
+        currentScore += points;
     }
 
 }

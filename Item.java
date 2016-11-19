@@ -48,7 +48,67 @@ public class Item {
     String getPrimaryName() { return primaryName; }
 
     public String getMessageForVerb(String verb) {
-        return messages.get(verb);
+        String retMessage= "";
+
+
+        //now that keys could also contain other chars, like [], use contains to get correct message
+        //Edit by David
+        for(String key: messages.keySet()){
+            if(key.contains(verb)){
+                retMessage = messages.get(key);
+            }
+
+            //if there's other effects, we need to execute them
+            if(key.contains("[")){
+               secondaryCommands(key);
+            }
+        }
+
+
+
+
+        return retMessage;
+    }
+
+
+    /**
+     * @author David
+     */
+
+    private void secondaryCommands(String key) {
+    String secondaryCommands = key.substring(key.indexOf('[',key.indexOf(']')));
+        String[] commands = secondaryCommands.split(",");
+
+
+        for(int i = 0; i < commands.length; i++){
+
+            String command = commands[i];
+
+            if(command.contains("Wound")){
+              GameState.instance().woundAdventurer(Integer.parseInt(command.substring(command.indexOf("("),
+                      command.indexOf(")"))));
+            }
+            if(command.contains("Score")){
+
+            }
+            if(command.contains("Die")){
+
+            }
+            if(command.contains("Win")){
+                GameState.instance().setWinCondition(true);
+            }
+            if(command.contains("Disappear")){
+
+            }
+            if(command.contains("Transform")){
+
+            }
+            if(command.contains("Teleport")){
+                GameState.instance().getDungeon().getEntry();
+            }
+        }
+
+
     }
 
     public String toString() {

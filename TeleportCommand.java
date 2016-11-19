@@ -19,6 +19,6 @@ class TeleportCommand extends Command{
      * @return String message to the user
      */
     public String execute(){
-
+        return "";
     }
 }

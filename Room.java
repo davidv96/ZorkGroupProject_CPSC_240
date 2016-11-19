@@ -137,6 +137,8 @@ public class Room {
         if (beenHere) {
             description = title;
         } else {
+            GameState.instance().addScore(5);
+
             description = title + "\n" + desc;
         }
         for (Item item : contents) {
