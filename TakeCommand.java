@@ -12,10 +12,12 @@ class TakeCommand extends Command {
         if (itemName == null || itemName.trim().length() == 0) {
             return "Take what?\n";
         }
+
         try {
             Room currentRoom = 
                 GameState.instance().getAdventurersCurrentRoom();
             Item theItem = currentRoom.getItemNamed(itemName);
+            if(theItem.getWeight()>100 || theItem.getWeight() == 1) return "You can't carry that.";
             GameState.instance().addToInventory(theItem);
             currentRoom.remove(theItem);
             return itemName + " taken.\n";

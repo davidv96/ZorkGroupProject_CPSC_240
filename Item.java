@@ -28,7 +28,7 @@ public class Item {
 
         // Read and parse verbs lines, as long as there are more.
         String verbLine = s.nextLine();
-        while (!verbLine.equals(Dungeon.SECOND_LEVEL_DELIM)) {
+        while (!verbLine.equals(Dungeon.SECOND_LEVEL_DELIM) && !verbLine.equals("-")) {
             if (verbLine.equals(Dungeon.TOP_LEVEL_DELIM)) {
                 throw new Dungeon.IllegalDungeonFormatException("No '" +
                     Dungeon.SECOND_LEVEL_DELIM + "' after item.");
@@ -47,7 +47,7 @@ public class Item {
 
     String getPrimaryName() { return primaryName; }
 
-    public String getMessageForVerb(String verb) {
+    public String getMessageForVerb(String verb) throws NoItemException {
         String retMessage= "";
 
 
@@ -56,12 +56,15 @@ public class Item {
         for(String key: messages.keySet()){
             if(key.contains(verb)){
                 retMessage = messages.get(key);
+
+                //if there's other effects, we need to execute them
+                if(key.contains("[")){
+                    secondaryCommands(key);
+                }
+
             }
 
-            //if there's other effects, we need to execute them
-            if(key.contains("[")){
-               secondaryCommands(key);
-            }
+
         }
 
 
@@ -75,8 +78,8 @@ public class Item {
      * @author David
      */
 
-    private void secondaryCommands(String key) {
-    String secondaryCommands = key.substring(key.indexOf('[',key.indexOf(']')));
+    private void secondaryCommands(String key) throws NoItemException {
+    String secondaryCommands = key.substring(key.indexOf('[') +1 ,key.indexOf(']'));
         String[] commands = secondaryCommands.split(",");
 
 
@@ -85,23 +88,40 @@ public class Item {
             String command = commands[i];
 
             if(command.contains("Wound")){
-              GameState.instance().woundAdventurer(Integer.parseInt(command.substring(command.indexOf("("),
+              GameState.instance().woundAdventurer(Integer.parseInt(command.substring(command.indexOf("(")+1,
                       command.indexOf(")"))));
             }
             if(command.contains("Score")){
-
+                GameState.instance().addScore(Integer.parseInt(
+                        command.substring(command.indexOf("("),command.indexOf(")"))));
             }
             if(command.contains("Die")){
-
+                GameState.instance().setAdventurersCurrentHealth(0);
+                GameState.instance().setLoseCondition(true);
             }
             if(command.contains("Win")){
                 GameState.instance().setWinCondition(true);
             }
             if(command.contains("Disappear")){
+                GameState.instance().removeFromInventory(this);
 
+                try {
+                    GameState.instance().getDungeon().disappearItem(this.primaryName);
+                } catch (NoItemException e) {
+                    e.printStackTrace();
+                }
             }
+            //will remove the item from the inventory, the dungeon itself, and add the new item to the inventory.
             if(command.contains("Transform")){
+                GameState.instance().removeFromInventory(this);
 
+                GameState.instance().getDungeon().disappearItem(String.valueOf(this));
+
+                Item newItem = GameState.instance().getDungeon().
+                        getItem(command.substring(command.indexOf("("), command.indexOf(")")));
+
+
+                GameState.instance().addToInventory(newItem);
             }
             if(command.contains("Teleport")){
                 GameState.instance().getDungeon().getEntry();
@@ -113,5 +133,13 @@ public class Item {
 
     public String toString() {
         return primaryName;
+    }
+
+    public int getWeight(){return weight;}
+
+    void setWeight(int dmg){
+        this.weight = weight - dmg;
+        if(this.weight ==0)
+            GameState.instance().getAdventurersCurrentRoom().remove(this);
     }
 }

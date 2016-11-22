@@ -11,7 +11,7 @@ import java.io.PrintWriter;
 public class GameState {
 
 
-
+    
 
     public static class IllegalSaveFormatException extends Exception {
         public IllegalSaveFormatException(String e) {
@@ -21,7 +21,8 @@ public class GameState {
 
     static String DEFAULT_SAVE_FILE = "bork_save";
     static String SAVE_FILE_EXTENSION = ".sav";
-    static String SAVE_FILE_VERSION = "Bork v3.0 save data";
+    static String
+            SAVE_FILE_VERSION = "Bork v3.0 save data";
 
     static String ADVENTURER_MARKER = "Adventurer:";
     static String CURRENT_ROOM_LEADER = "Current room: ";
@@ -34,6 +35,8 @@ public class GameState {
     private int AdventurersCurrentHealth = 100;
     private int currentScore = 0;
     private boolean winCondition = false;
+    private boolean loseCondition = false;
+
 
 
     static synchronized GameState instance() {
@@ -48,7 +51,7 @@ public class GameState {
     }
 
     void restore(String filename) throws FileNotFoundException,
-        IllegalSaveFormatException, Dungeon.IllegalDungeonFormatException {
+            IllegalSaveFormatException, Dungeon.IllegalDungeonFormatException {
 
         Scanner s = new Scanner(new FileReader(filename));
 
@@ -60,28 +63,29 @@ public class GameState {
 
         if (!dungeonFileLine.startsWith(Dungeon.FILENAME_LEADER)) {
             throw new IllegalSaveFormatException("No '" +
-                Dungeon.FILENAME_LEADER + 
-                "' after version indicator.");
+                    Dungeon.FILENAME_LEADER +
+                    "' after version indicator.");
         }
 
         dungeon = new Dungeon(dungeonFileLine.substring(
-            Dungeon.FILENAME_LEADER.length()), false);
+
+                Dungeon.FILENAME_LEADER.length()), false);
         dungeon.restoreState(s);
 
         s.nextLine();  // Throw away "Adventurer:".
         String currentRoomLine = s.nextLine();
         adventurersCurrentRoom = dungeon.getRoom(
-            currentRoomLine.substring(CURRENT_ROOM_LEADER.length()));
+                currentRoomLine.substring(CURRENT_ROOM_LEADER.length()));
         if (s.hasNext()) {
             String inventoryList = s.nextLine().substring(
-                INVENTORY_LEADER.length());
+                    INVENTORY_LEADER.length());
             String[] inventoryItems = inventoryList.split(",");
             for (String itemName : inventoryItems) {
                 try {
                     addToInventory(dungeon.getItem(itemName));
                 } catch (Item.NoItemException e) {
                     throw new IllegalSaveFormatException("No such item '" +
-                        itemName + "'");
+                            itemName + "'");
                 }
             }
         }
@@ -179,16 +183,14 @@ public class GameState {
         return winCondition;
     }
 
-    private boolean loseCondition = false;
-    public boolean getLoseCondition() {
-        return loseCondition;
+    public void setLoseCondition(boolean condition){
+        this.loseCondition = condition;
     }
 
-
+    public boolean getLoseCondition(){return loseCondition;}
     /**
      * The damage value will be subtracted from the Adventurer's health. If the value is negative,
      * then it will increase his health.
-     *
      *
      * @param dmg the int value which will affect the adventurer's overall health
      */
@@ -200,8 +202,16 @@ public class GameState {
         return AdventurersCurrentHealth;
     }
 
+    int getCurrentScore(){
+        return currentScore;
+    }
+
     public void addScore(int points) {
         currentScore += points;
+    }
+
+    public void setAdventurersCurrentHealth(int adventurersNewHealth) {
+        this.AdventurersCurrentHealth = adventurersNewHealth;
     }
 
 }

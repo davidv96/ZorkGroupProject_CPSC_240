@@ -6,10 +6,10 @@ import java.util.Scanner;
 public class Interpreter {
 
     private static GameState state; // not strictly necessary; GameState is 
-                                    // singleton
+    // singleton
 
-    public static String USAGE_MSG = 
-        "Usage: Interpreter borkFile.bork|saveFile.sav.";
+    public static String USAGE_MSG =
+            "Usage: Interpreter borkFile.bork|saveFile.sav.";
 
     public static void main(String args[]) {
 
@@ -25,34 +25,57 @@ public class Interpreter {
             state = GameState.instance();
             if (args[0].endsWith(".bork")) {
                 state.initialize(new Dungeon(args[0]));
-                System.out.println("\nWelcome to " + 
-                    state.getDungeon().getName() + "!");
+                System.out.println("\nWelcome to " +
+                        state.getDungeon().getName() + "!");
             } else if (args[0].endsWith(".sav")) {
                 state.restore(args[0]);
-                System.out.println("\nWelcome back to " + 
-                    state.getDungeon().getName() + "!");
+                System.out.println("\nWelcome back to " +
+                        state.getDungeon().getName() + "!");
             } else {
                 System.err.println(USAGE_MSG);
                 System.exit(2);
             }
 
-            System.out.print("\n" + 
-                state.getAdventurersCurrentRoom().describe() + "\n");
+            System.out.print("\n" +
+                    state.getAdventurersCurrentRoom().describe() + "\n");
 
             command = promptUser(commandLine);
 
-            while (!command.equals("q") && !state.getWinCondition() && !state.getLoseCondition()) {
+
+            while (!command.equals("q")) {
 
                 System.out.print(
-                    CommandFactory.instance().parse(command).execute());
+                        CommandFactory.instance().parse(command).execute());
 
+                if(state.getWinCondition() == true || state.getLoseCondition() == true
+                        || state.getAdventurersCurrentHealth() == 0) break;
                 command = promptUser(commandLine);
             }
 
+            if(GameState.instance().getAdventurersCurrentHealth() == 0) state.setLoseCondition(true);
+
+            if (state.getWinCondition() == true){
+                System.out.println("Winner winner. Chicken Dinner.");
+                System.out.println("Final room: " + state.getAdventurersCurrentRoom().getTitle());
+                System.out.println("Final score: " + state.getCurrentScore());
+                System.out.println("Final health: " + state.getAdventurersCurrentHealth());
+                System.out.println("Final inventory: " + state.getInventoryNames());
+
+            }
+
+            if (state.getLoseCondition() == true){
+                System.out.println("You are officially a loser.");
+                System.out.println("Final room " + state.getAdventurersCurrentRoom().getTitle());
+                System.out.println("Final score: " + state.getCurrentScore());
+                System.out.println("Final health: " + state.getAdventurersCurrentHealth());
+                System.out.println("Final inventory: " + state.getInventoryNames());
+            }
+
+
             System.out.println("Bye!");
 
-        } catch(Exception e) { 
-            e.printStackTrace(); 
+        } catch(Exception e) {
+            e.printStackTrace();
         }
     }
 

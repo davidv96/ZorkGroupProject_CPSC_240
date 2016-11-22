@@ -10,7 +10,7 @@ class ItemSpecificCommand extends Command {
         this.noun = noun;
     }
 
-    public String execute() {
+    public String execute() throws Item.NoItemException {
         
         Item itemReferredTo = null;
         try {

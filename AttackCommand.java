@@ -7,6 +7,7 @@
  */
 public class AttackCommand extends Command {
     private String itemName;
+    private Item target = null;
 
     public AttackCommand(String itemName) {
         this.itemName = itemName;
@@ -22,21 +23,34 @@ public class AttackCommand extends Command {
      */
 
     @Override
-    String execute() {
+    String execute() throws Item.NoItemException {
         if (itemName == null || itemName.trim().length() == 0) {
             return "Attack what?\n";
         }
-        try {
-            Room currentRoom =
-                    GameState.instance().getAdventurersCurrentRoom();
-            Item theItem = currentRoom.getItemNamed(itemName);
+        if(GameState.instance().getItemFromInventoryNamed("Sword") != null) {
+            try {
+                Room currentRoom =
+                        GameState.instance().getAdventurersCurrentRoom();
 
+                target = GameState.instance().getItemInVicinityNamed(itemName);
 
-        } catch (Item.NoItemException e) {
-            e.printStackTrace();
+                if (target.getWeight() == 1) {
+                    return "It's not nice to attack others. \n";
+                }
+
+                if (target.getWeight() >= 100) {
+                    target.setWeight(GameState.instance().getItemFromInventoryNamed("Sword").getWeight());
+
+                    return target.getMessageForVerb("attack") + "\n";
+                }
+
+            } catch (Item.NoItemException e) {
+                System.out.print("Your target: " + target.getPrimaryName() + ", is not in this room.");
+            }
+
         }
 
-        return null;
+       return "You can't attack things without a weapon.\n";
     }
 
 }

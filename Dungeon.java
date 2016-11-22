@@ -86,6 +86,8 @@ public class Dungeon {
             }
         } catch (Item.NoItemException e) {  /* end of items */ }
 
+
+
         // Throw away Rooms starter.
         if (!s.nextLine().equals(ROOMS_MARKER)) {
             throw new IllegalDungeonFormatException("No '" +
@@ -115,6 +117,8 @@ public class Dungeon {
                 Exit exit = new Exit(s, this);
             }
         } catch (Exit.NoExitException e) {  /* end of exits */ }
+
+
 
         s.close();
     }
